@@ -1,4 +1,4 @@
-package database
+package domain
 
 type User struct {
 	Id     int
