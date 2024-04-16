@@ -1,8 +1,8 @@
-package domain
+package db
 
 type User struct {
 	Id     int
-	ChatId int
+	ChatId string
 	Name   string
 	Hash   string
 	Salt   string

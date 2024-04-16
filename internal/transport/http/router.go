@@ -1,11 +1,11 @@
 package http
 
 import (
-	"dbservice/pkg/transport/http/handler"
+	"dbservice/internal/transport/http/handler"
 	"github.com/gorilla/mux"
 )
 
-func NewRouter() *mux.Router {
+func NewRouter(handler *handler.Handler) *mux.Router {
 	router := mux.NewRouter().StrictSlash(true)
 
 	router.HandleFunc("/user", handler.UserGetHandler).Methods("GET")
