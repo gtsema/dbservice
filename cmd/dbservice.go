@@ -6,29 +6,47 @@ import (
 	router "dbservice/internal/transport/http"
 	"dbservice/internal/transport/http/handler"
 	"fmt"
+	"github.com/spf13/viper"
 	"log"
 	"net/http"
+	"os"
+	"path/filepath"
 )
 
 func main() {
+	if err := initCfg(); err != nil {
+		log.Fatalf("Error reading configs file, %s", err.Error())
+	}
 
-	db, err := repository.NewSqliteDB(":memory:")
+	db, err := repository.NewSqliteDB(viper.GetString("db_url"))
 	if err != nil {
 		log.Fatalf("failed to initialize db: %s", err.Error())
 	}
 
-	repos := repository.NewRepository(db)
-	service := service.NewService(repos)
-	handler := handler.NewHandler(service)
+	userRepository := repository.NewRepository(db)
+	userService := service.NewService(userRepository)
+	userHandler := handler.NewHandler(userService)
 
+	serverConStr := fmt.Sprintf("%s:%s", viper.GetString("server_host"), viper.GetString("server_port"))
 	httpServer := &http.Server{
-		Addr:    ":8080",
-		Handler: router.NewRouter(handler),
+		Addr:    serverConStr,
+		Handler: router.NewRouter(userHandler),
 	}
 
-	fmt.Println("Запуск сервера на http://localhost:8080")
+	fmt.Println("Запуск сервера на " + serverConStr)
 	err = httpServer.ListenAndServe()
 	if err != nil && err != http.ErrServerClosed {
 		log.Fatalf("Ошибка запуска HTTP-сервера: %v", err)
 	}
+}
+
+func initCfg() error {
+	exePath, err := os.Executable()
+	if err != nil {
+		panic(err)
+	}
+	exeDir := filepath.Dir(exePath)
+	viper.AddConfigPath(exeDir + string(os.PathSeparator) + "configs")
+	viper.SetConfigName("config")
+	return viper.ReadInConfig()
 }

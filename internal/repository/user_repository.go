@@ -16,7 +16,7 @@ func NewUserRepository(db *sql.DB) *UserRepositorySqlite {
 
 func (r *UserRepositorySqlite) CreateUser(user db.User) (int, error) {
 	var id int
-	query := fmt.Sprintf("INSERT INTO %s (ChatId, Name, Hash, Salt) VALUES ($1, $2, $3, $4) RETURNING Id", usersTable)
+	query := fmt.Sprintf("INSERT INTO %s (chatId, name, hash, salt) VALUES ('$1', '$2', '$3', '$4')", usersTable)
 
 	row := r.db.QueryRow(query, user.ChatId, user.Name, user.Hash, user.Salt)
 	if err := row.Scan(&id); err != nil {
@@ -28,7 +28,7 @@ func (r *UserRepositorySqlite) CreateUser(user db.User) (int, error) {
 
 func (r *UserRepositorySqlite) GetUser(chatId string) (db.User, error) {
 	var user db.User
-	query := fmt.Sprintf("SELECT Id, ChatId, Name FROM %s WHERE ChatId = $1", usersTable)
+	query := fmt.Sprintf("SELECT id, chatId, name FROM %s WHERE chatId = '$1'", usersTable)
 
 	row := r.db.QueryRow(query, chatId)
 	err := row.Scan(&user.Id, &user.ChatId, &user.Name)
@@ -37,7 +37,7 @@ func (r *UserRepositorySqlite) GetUser(chatId string) (db.User, error) {
 }
 
 func (r *UserRepositorySqlite) DeleteUser(chatId string) error {
-	query := fmt.Sprintf("DELETE FROM %s WHERE ChatId = $1", usersTable)
+	query := fmt.Sprintf("DELETE FROM %s WHERE chatId = '$1'", usersTable)
 
 	_, err := r.db.Exec(query, chatId)
 	return err
