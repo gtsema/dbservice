@@ -6,8 +6,9 @@ import (
 )
 
 type UserRepository interface {
-	CreateUser(user db.User) (int, error)
-	GetUser(chatId string) (db.User, error)
+	CreateUser(user db.User) (db.User, error)
+	ReadUser(chatId string) (db.User, error)
+	UpdateUser(user db.User) (db.User, error)
 	DeleteUser(chatId string) error
 }
 
@@ -16,7 +17,5 @@ type Repository struct {
 }
 
 func NewRepository(db *sql.DB) *Repository {
-	return &Repository{
-		UserRepository: NewUserRepository(db),
-	}
+	return &Repository{UserRepository: newSqliteUserRepository(db)}
 }

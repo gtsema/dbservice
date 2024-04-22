@@ -1,6 +1,7 @@
 package main
 
 import (
+	"dbservice/internal/database"
 	"dbservice/internal/repository"
 	"dbservice/internal/service"
 	router "dbservice/internal/transport/http"
@@ -9,8 +10,6 @@ import (
 	"github.com/spf13/viper"
 	"log"
 	"net/http"
-	"os"
-	"path/filepath"
 )
 
 func main() {
@@ -18,7 +17,7 @@ func main() {
 		log.Fatalf("Error reading configs file, %s", err.Error())
 	}
 
-	db, err := repository.NewSqliteDB(viper.GetString("db_url"))
+	db, err := database.NewSqliteDB(viper.GetString("db_url"))
 	if err != nil {
 		log.Fatalf("failed to initialize db: %s", err.Error())
 	}
@@ -41,12 +40,13 @@ func main() {
 }
 
 func initCfg() error {
-	exePath, err := os.Executable()
-	if err != nil {
-		panic(err)
-	}
-	exeDir := filepath.Dir(exePath)
-	viper.AddConfigPath(exeDir + string(os.PathSeparator) + "configs")
+	//exePath, err := os.Executable()
+	//if err != nil {
+	//	panic(err)
+	//}
+	//exeDir := filepath.Dir(exePath)
+	//viper.AddConfigPath(exeDir + string(os.PathSeparator) + "configs")
+	viper.AddConfigPath("./configs")
 	viper.SetConfigName("config")
 	return viper.ReadInConfig()
 }

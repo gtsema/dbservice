@@ -19,3 +19,4 @@ RUN mkdir ./migrate &&\
     rm -r ./migrate &&\
     chmod +x /usr/local/bin/migrate
 #    dbservice/dbservice
+#    migrate -database sqlite3://database.db -path ./migrations/ up 1

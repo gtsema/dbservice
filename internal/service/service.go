@@ -2,11 +2,12 @@ package service
 
 import (
 	"dbservice/internal/models/api"
+	"dbservice/internal/models/db"
 	"dbservice/internal/repository"
 )
 
 type UserService interface {
-	CreateUser(user *api.User) (int, error)
+	CreateUser(user *api.User) (*db.User, error)
 	GetUser(chatId string) (*api.User, error)
 	DeleteUser(ChatId string) error
 }

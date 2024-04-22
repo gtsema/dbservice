@@ -14,19 +14,19 @@ func NewUserServiceRest(repository repository.UserRepository) *UserServiceRest {
 	return &UserServiceRest{repository: repository}
 }
 
-func (s *UserServiceRest) CreateUser(user *api.User) (int, error) {
-	id, err := s.repository.CreateUser(db.User{
+func (s *UserServiceRest) CreateUser(user *api.User) (*db.User, error) {
+	dbuser, err := s.repository.CreateUser(db.User{
 		ChatId: user.ChatId,
 		Name:   user.Name,
 		Hash:   "0",
 		Salt:   "cats",
 	})
 
-	return id, err
+	return &dbuser, err
 }
 
 func (s *UserServiceRest) GetUser(chatId string) (*api.User, error) {
-	user, err := s.repository.GetUser(chatId)
+	user, err := s.repository.ReadUser(chatId)
 	if err != nil {
 		return nil, err
 	}
