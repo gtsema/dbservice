@@ -6,11 +6,10 @@ import (
 	router "dbservice/internal/transport/http"
 	"dbservice/internal/transport/http/handler"
 	"fmt"
-	"github.com/spf13/viper"
 	"log"
 	"net/http"
-	"os"
-	"path/filepath"
+
+	"github.com/spf13/viper"
 )
 
 func main() {
@@ -41,12 +40,7 @@ func main() {
 }
 
 func initCfg() error {
-	exePath, err := os.Executable()
-	if err != nil {
-		panic(err)
-	}
-	exeDir := filepath.Dir(exePath)
-	viper.AddConfigPath(exeDir + string(os.PathSeparator) + "configs")
+	viper.AddConfigPath("./")
 	viper.SetConfigName("config")
 	return viper.ReadInConfig()
 }

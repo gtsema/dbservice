@@ -1,3 +1,0 @@
-server_host: "0.0.0.0"
-server_port: "8080"
-db_url: ":memory:"

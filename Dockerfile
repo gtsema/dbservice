@@ -1,21 +1,23 @@
 FROM golang:alpine as builder
-LABEL authors="gts"
+
+ENV CGO_ENABLED=1
 
 COPY . .
+WORKDIR /go/cmd
+
 RUN apk add --no-cache --update gcc g++ &&\
-    cd ./cmd &&\
-    CGO_ENABLED=1 go build -o dbservice
+    go build -o dbservice &&\
+    go install github.com/pressly/goose/v3/cmd/goose@latest
 
 FROM alpine
+
+ENV GOOSE_DRIVER=sqlite3
+ENV GOOSE_DBSTRING=./database.db
+ENV GOOSE_MIGRATION_DIR=./migrations
 
 COPY --from=builder go/cmd/dbservice ./dbservice/
 COPY --from=builder go/configs ./dbservice/configs/
 COPY --from=builder go/migrations ./dbservice/migrations/
+COPY --from=builder go/bin/goose ./dbservice/goose/
 
-RUN mkdir ./migrate &&\
-    wget -O ./migrate/migrate.tar.gz https://github.com/golang-migrate/migrate/releases/latest/download/migrate.linux-amd64.tar.gz &&\
-    tar -xzf ./migrate/migrate.tar.gz -C ./migrate &&\
-    mv ./migrate/migrate /usr/local/bin/ &&\
-    rm -r ./migrate &&\
-    chmod +x /usr/local/bin/migrate
-#    dbservice/dbservice
+RUN echo "mur"
