@@ -20,7 +20,3 @@ func NewHandler(s *service.Service) *Handler {
 		UserHandler: NewUserHandlerHttp(s),
 	}
 }
-
-func (h *Handler) InitRoutes() {
-
-}

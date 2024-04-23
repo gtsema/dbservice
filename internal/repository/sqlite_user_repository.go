@@ -3,6 +3,7 @@ package repository
 import (
 	"database/sql"
 	"dbservice/internal/models/db"
+	"fmt"
 )
 
 const usersTable = "users"
@@ -17,10 +18,11 @@ func newSqliteUserRepository(database *sql.DB) *SqliteUserRepository {
 
 func (r SqliteUserRepository) CreateUser(user db.User) (db.User, error) {
 	var user_ db.User
-	query := `INSERT INTO $0 (chatId, name, hash, salt) VALUES ('$1', '$2', '$3', '$4');
-			  SELECT (id, chatId, name, hash, salt) FROM $0 WHERE rowid = last_insert_rowid();`
+	query := fmt.Sprintf("INSERT INTO %s (chatId, name, hash, salt) VALUES ('$1', '$2', '$3', '$4');", usersTable)
 
-	row := r.db.QueryRow(query, usersTable, user.ChatId, user.Name, user.Hash, user.Salt)
+	// SELECT (id, chatId, name, hash, salt) FROM $0 WHERE rowid = last_insert_rowid();
+
+	row := r.db.QueryRow(query, user.ChatId, user.Name, user.Hash, user.Salt)
 	if err := row.Scan(&user_.Id, &user_.ChatId, &user_.Name); err != nil {
 		return user_, err
 	}

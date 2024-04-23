@@ -11,13 +11,9 @@ RUN apk add --no-cache --update gcc g++ &&\
 
 FROM alpine
 
-ENV GOOSE_DRIVER=sqlite3
-ENV GOOSE_DBSTRING=./database.db
-ENV GOOSE_MIGRATION_DIR=./migrations
-
 COPY --from=builder go/cmd/dbservice ./dbservice/
 COPY --from=builder go/configs ./dbservice/configs/
 COPY --from=builder go/migrations ./dbservice/migrations/
-COPY --from=builder go/bin/goose ./dbservice/goose/
+COPY --from=builder go/bin/goose ./dbservice/
 
 RUN echo "mur"

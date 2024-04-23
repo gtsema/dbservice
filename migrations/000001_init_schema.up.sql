@@ -1,3 +1,4 @@
+-- +goose Up
 CREATE TABLE users (
    id INTEGER PRIMARY KEY AUTOINCREMENT,
    chatId TEXT NOT NULL,
@@ -5,3 +6,6 @@ CREATE TABLE users (
    hash TEXT NOT NULL,
    salt TEXT NOT NULL
 );
+
+-- +goose Down
+DROP TABLE users;
