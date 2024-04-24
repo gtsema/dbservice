@@ -14,15 +14,19 @@ func NewUserServiceRest(repository repository.UserRepository) *UserServiceRest {
 	return &UserServiceRest{repository: repository}
 }
 
-func (s *UserServiceRest) CreateUser(user *api.User) (*db.User, error) {
-	dbuser, err := s.repository.CreateUser(db.User{
+func (s *UserServiceRest) CreateUser(user *api.User) (*api.User, error) {
+	user_, err := s.repository.CreateUser(db.User{
 		ChatId: user.ChatId,
 		Name:   user.Name,
-		Hash:   "0",
+		Hash:   "cats",
 		Salt:   "cats",
 	})
 
-	return &dbuser, err
+	return &api.User{
+		Id:     user_.Id,
+		Name:   user_.Name,
+		ChatId: user_.ChatId,
+	}, err
 }
 
 func (s *UserServiceRest) GetUser(chatId string) (*api.User, error) {
@@ -36,6 +40,22 @@ func (s *UserServiceRest) GetUser(chatId string) (*api.User, error) {
 		ChatId: user.ChatId,
 		Name:   user.Name,
 	}, nil
+}
+
+func (s *UserServiceRest) UpdateUser(user *api.User) (*api.User, error) {
+	user_, err := s.repository.UpdateUser(db.User{
+		Id:     user.Id,
+		ChatId: user.ChatId,
+		Name:   user.Name,
+		Hash:   "cats",
+		Salt:   "cats",
+	})
+
+	return &api.User{
+		Id:     user_.Id,
+		Name:   user_.Name,
+		ChatId: user_.ChatId,
+	}, err
 }
 
 func (s *UserServiceRest) DeleteUser(chatId string) error {

@@ -4,7 +4,6 @@ import (
 	"dbservice/internal/models/api"
 	"dbservice/internal/service"
 	"encoding/json"
-	"fmt"
 	"net/http"
 )
 
@@ -17,11 +16,10 @@ func NewUserHandlerHttp(userService service.UserService) *UserHandlerHttp {
 }
 
 func (h UserHandlerHttp) UserGetHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Printf("Method: %s, Path: %s", r.Method, r.URL.Path)
-
-	user, err := h.userService.GetUser(r.RequestURI)
+	user, err := h.userService.GetUser(r.URL.Query().Get("chatId"))
 	if err != nil {
-		http.Error(w, "User not found", http.StatusNotFound)
+		http.Error(w, "user not found", http.StatusNotFound)
+		return
 	}
 	err = json.NewEncoder(w).Encode(user)
 	if err != nil {
@@ -30,8 +28,6 @@ func (h UserHandlerHttp) UserGetHandler(w http.ResponseWriter, r *http.Request) 
 }
 
 func (h UserHandlerHttp) UserPostHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Printf("Method: %s, Path: %s", r.Method, r.URL.Path)
-
 	var u api.User
 	if err := json.NewDecoder(r.Body).Decode(&u); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -47,6 +43,32 @@ func (h UserHandlerHttp) UserPostHandler(w http.ResponseWriter, r *http.Request)
 	w.WriteHeader(http.StatusCreated)
 }
 
+func (h UserHandlerHttp) UserPutHandler(w http.ResponseWriter, r *http.Request) {
+	var u api.User
+	if err := json.NewDecoder(r.Body).Decode(&u); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	_, err := h.userService.UpdateUser(&u)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+}
+
 func (h UserHandlerHttp) UserDeleteHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Printf("Method: %s, Path: %s", r.Method, r.URL.Path)
+	if err := h.userService.DeleteUser(r.URL.Query().Get("chatId")); err != nil {
+		if err.Error() == "user not found" {
+			http.Error(w, err.Error(), http.StatusNotFound)
+			return
+		}
+
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 }

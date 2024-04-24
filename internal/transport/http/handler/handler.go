@@ -8,6 +8,7 @@ import (
 type UserHandler interface {
 	UserGetHandler(w http.ResponseWriter, r *http.Request)
 	UserPostHandler(w http.ResponseWriter, r *http.Request)
+	UserPutHandler(w http.ResponseWriter, r *http.Request)
 	UserDeleteHandler(w http.ResponseWriter, r *http.Request)
 }
 
