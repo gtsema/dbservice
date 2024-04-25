@@ -3,7 +3,7 @@
 if [ -f "./dbservice.db" ]; then
   ./dbservice
 else
-  ./dbservice ;
+  ./dbservice &
 
   while [ ! -f "./dbservice.db" ]
   do
