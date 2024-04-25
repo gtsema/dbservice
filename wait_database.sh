@@ -1,10 +1,14 @@
 #!/bin/sh
 
-./dbservice &
+if [ -f "./dbservice.db" ]; then
+  ./dbservice
+else
+  ./dbservice &
 
-while [ ! -f "./dbservice.db" ]
-do
-  sleep 1
-done
+  while [ ! -f "./dbservice.db" ]
+  do
+    sleep 1
+  done
 
-./goose up
+  ./goose up
+fi
