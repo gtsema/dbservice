@@ -13,7 +13,7 @@ FROM alpine
 
 COPY --from=builder go/cmd/dbservice ./dbservice/
 COPY --from=builder go/configs ./dbservice/configs/
-COPY --from=builder go/wait_database.sh ./dbservice/
+COPY --from=builder go/entrypoint.sh ./dbservice/
 COPY --from=builder go/migrations ./dbservice/migrations/
 COPY --from=builder go/bin/goose ./dbservice/
 
@@ -23,6 +23,6 @@ ENV GOOSE_DRIVER=sqlite3
 ENV GOOSE_DBSTRING=./dbservice.db
 ENV GOOSE_MIGRATION_DIR=./migrations
 
-RUN chmod +x ./wait_database.sh
+RUN chmod +x ./entrypoint.sh
 
-CMD ["./wait_database.sh"]
+CMD ["./entrypoint.sh"]
